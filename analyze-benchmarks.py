@@ -44,16 +44,22 @@ def main(instances, resultsfile, percent, targetmetric, targetvalue):
         return 1
 
     restop = xml.etree.ElementTree.parse(resultsfile).getroot()
-    bmrun = restop.find('run')
     maininst = instances[0]
-    for bench in bmrun.findall('benchmark'):
+    benchids = []
+    for bench in restop.findall('run/benchmark'):
         bench_id = bench.get('id')
         if bench_id == 'version':
             continue
         if selected_bench is not None and selected_bench != bench_id:
             continue
+        if bench_id in benchids:
+            continue
+        benchids.append(bench_id)
+
+    for bench_id in benchids:
         metrics = {}
-        for inst in bench.findall('instance'):
+        for inst in restop.findall(
+         f'run/benchmark[@id="{bench_id}"]/instance'):
             inst_id = inst.get('id')
             inst_ipat = None
             for ipat in instances:
