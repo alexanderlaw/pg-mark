@@ -6,6 +6,7 @@ ARG PHASE2_ACTION
 ARG REPOSITORY
 ARG EXTRA_OS_PACKAGES
 ARG EXTRA_PG_MODULES
+ARG INITDB_OPTIONS
 ARG PG_PARAMETERS
 ARG CFG_OPTIONS
 
@@ -62,7 +63,7 @@ RUN JAVA_VERSION=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}'); \
 
 RUN rm -rf /var/lib/pgpro/$PGPRO_EDN-$PG_VERSION/data
 
-RUN /opt/pgpro/$PGPRO_EDN-$PG_VERSION/bin/pg-setup initdb
+RUN /opt/pgpro/$PGPRO_EDN-$PG_VERSION/bin/pg-setup initdb $INITDB_OPTIONS
 
 COPY ./$PHASE2_ACTION /bin/
 RUN $PHASE2_ACTION

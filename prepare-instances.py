@@ -152,6 +152,11 @@ def main(configfile, instances):
         if instance.get('pgpro_edition') is not None:
             build_args += ['--build-arg',
                            (f'PGPRO_EDN={instance.get("pgpro_edition")}')]
+
+        if instance.get('initdb_options') is not None:
+            build_args += ['--build-arg', (
+                f'INITDB_OPTIONS={instance.get("initdb_options")}')]
+
         pg_params = ''
         for param in instance.findall('config/pg_param'):
             pg_params += f"{param.get('name')} = '{param.get('value')}'\\n"

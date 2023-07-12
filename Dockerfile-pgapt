@@ -6,6 +6,7 @@ ARG PHASE2_ACTION
 ARG REPOSITORY
 ARG EXTRA_OS_PACKAGES
 ARG EXTRA_PG_MODULES
+ARG INITDB_OPTIONS
 ARG PG_PARAMETERS
 ARG CFG_OPTIONS
 
@@ -60,7 +61,7 @@ RUN pg_dropcluster --stop $PG_VERSION main
 COPY ./$PHASE2_ACTION /bin/
 RUN $PHASE2_ACTION
 
-RUN pg_createcluster --start $PG_VERSION main
+RUN pg_createcluster --start $PG_VERSION main -- $INITDB_OPTIONS
 
 RUN touch /home/postgres/extra.conf && printf "\nlisten_addresses='*'\n"\
 "logging_collector = on\n"\

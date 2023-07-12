@@ -7,6 +7,7 @@ ARG REPOSITORY
 ARG EXTRA_OS_PACKAGES
 ARG EXTRA_SRC_GIT
 ARG EXTRA_PG_MODULES
+ARG INITDB_OPTIONS
 ARG PG_PARAMETERS
 ARG CFG_OPTIONS
 
@@ -85,7 +86,7 @@ RUN if [ -d /home/postgres/src/extra ]; then cd /home/postgres/src/extra && make
 
 USER postgres
 
-RUN /usr/local/pgsql/bin/initdb -D /var/lib/postgresql/main -k
+RUN /usr/local/pgsql/bin/initdb -D /var/lib/postgresql/main $INITDB_OPTIONS
 
 RUN touch /home/postgres/extra.conf && printf "\nlisten_addresses='*'\n"\
 "logging_collector = on\n"\
