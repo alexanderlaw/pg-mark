@@ -4,22 +4,26 @@ set -e
 
 # Based on https://blog.pgaddict.com/file/tpcds-tooling.tgz / run-tpcds.sh
 
-# number of pre-generated SQL scripts
 QUERYDIR=resources/tpcds-tooling/queries-compat
 #QUERIES=1
 # timeout (1h by default)
-TIMEOUT=3600000
+PGOPTIONS="-c statement_timeout=1h"
+export PGOPTIONS
 
-cat << EOF | psql tpcds > results/query_0.log 2>&1
-\\o /dev/null
-\\timing
-set statement_timeout=$TIMEOUT;
-\\i src/tpcds/tools/query_0.sql
+cat << 'EOF' | psql tpcds > results/query_0.log 2>&1
+\o /dev/null
+\timing
+\i src/tpcds/tools/query_0.sql
 EOF
 
-psql tpcds -f $QUERYDIR/explain.sql > results/explain.log 2>&1
+if [[ "${!#}" == "EXPLAIN-ALL" ]]; then
+psql tpcds -e -f $QUERYDIR/explain.sql > results/explain.log 2>&1
+psql tpcds -e -f $QUERYDIR/explain-analyze.sql > results/explain-analyze.log 2>&1
+fi
 
-cat << EOF | psql tpcds > results/explain-analyze.log 2>&1
-set statement_timeout=$TIMEOUT;
-\i $QUERYDIR/explain-analyze.sql
-EOF
+if [[ "${!#}" == "EXPLAIN" ]]; then
+sed "s/^select /explain select /" src/tpcds/tools/query_0.sql >src/tpcds/tools/query_0_explain.sql
+sed "s/^select /explain (analyze, verbose) select /" src/tpcds/tools/query_0.sql >src/tpcds/tools/query_0_explain_analyze.sql
+psql tpcds -e -f src/tpcds/tools/query_0_explain.sql > results/explain.log
+psql tpcds -e -f src/tpcds/tools/query_0_explain_analyze.sql > results/explain-analyze.log
+fi
