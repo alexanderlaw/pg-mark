@@ -33,7 +33,8 @@
         <instance id="pg-src-master-perf" disabled="true" type="src" features="perf" git_branch="master" />
         <instance id="pg-src-15" type="src" pg_version="15devel" git_branch="REL_15_STABLE" />
         <instance id="pg-src-16" type="src" pg_version="16devel" git_branch="REL_16_STABLE" />
-        <instance id="pg-src-master" type="src" pg_version="17devel" git_branch="master" />
+        <instance id="pg-src-17" type="src" pg_version="17devel" git_branch="REL_17_STABLE" />
+        <instance id="pg-src-master" type="src" pg_version="18devel" git_branch="master" />
     </pg_instances>
 
     <benchmarks>
