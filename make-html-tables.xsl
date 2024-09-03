@@ -60,7 +60,7 @@ tr th {
 
 <xsl:template match="benchmark">
   <table border="1" cellspacing="0">
-  <caption>Benchmark <xsl:value-of select="@id"/></caption>
+  <caption><xsl:value-of select="@id"/></caption>
   <thead><tr><th>Instance</th>
   <xsl:for-each select="instance/metric/@id[not(. = ../../preceding-sibling::instance/metric/@id)]">
   <xsl:sort data-type="number" order="descending" />
