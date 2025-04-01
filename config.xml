@@ -83,7 +83,7 @@ scripts/tpch/prepare 5 >results/prepare.log 2>&1
             </prepare>
             <execute>
 <![CDATA[
-cd src/pg_tpch && bash tpch.sh ../../results tpch-db postgres >../../results/tpsh.log 2>&1 && cd ../.. && cat results/results.log
+cd src/pg_tpch && bash tpch.sh ../../results tpch-db postgres >../../results/tpch.log 2>&1 && cd ../.. && cat results/results.log
 ]]>
             </execute>
             <results>
