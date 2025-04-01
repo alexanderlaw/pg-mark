@@ -79,8 +79,7 @@ createdb benchdb && ./ref_pgbench -i benchdb >results/prepare.log 2>&1
             </execute>
             <results>
                 <metric id="latency_avg" regexp="latency average = ([0-9.]+) ms"/>
-                <metric id="tps1" regexp="tps = ([0-9.]+) \(including connections establishing\)"/>
-                <metric id="tps2" regexp="tps = ([0-9.]+) \(excluding connections establishing\)"/>
+                <metric id="tps" regexp="tps = ([0-9.]+) \(without initial connection time\)"/>
             </results>
         </benchmark>
 

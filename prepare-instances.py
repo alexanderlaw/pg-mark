@@ -122,7 +122,7 @@ def main(configfile, instances):
 
         # Prepare reference pgbench
         git_dir = config.find('./settings/default/git').get('path')
-        ref_pgbench_version = 'REL_11_1'
+        ref_pgbench_version = 'REL_17_1'
         check_call(f'cd "{git_dir}" && rm -rf * && '
                    f'git checkout {ref_pgbench_version} >/dev/null && '
                    f'git reset --hard HEAD >/dev/null',
