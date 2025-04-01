@@ -3,16 +3,15 @@
 set -e
 
 cd /home/postgres/src/postgres-pgbench
-./configure >/tmp/pgbench-configure.log
-cd src/bin/pgbench
-
-make >/tmp/pgbench-make.log
+mkdir build && cd build
+../configure >/tmp/pgbench-configure.log
+make -C src/bin/pgbench >/tmp/pgbench-make.log
 cd /home/postgres
 mkdir ref
-cp -P src/postgres-pgbench/src/bin/pgbench/pgbench src/postgres-pgbench/src/interfaces/libpq/libpq.so* ref/
+cp -P src/postgres-pgbench/build/src/bin/pgbench/pgbench src/postgres-pgbench/build/src/interfaces/libpq/libpq.so* ref/
 cat << 'EOF' > ref_pgbench
 #!/bin/bash
-export PGHOST="$(psql -Aqt  -c "SHOW unix_socket_directory")"
+export PGHOST="$(psql -Aqt  -c "SHOW unix_socket_directories")"
 LD_LIBRARY_PATH=/home/postgres/ref /home/postgres/ref/pgbench "$@"
 EOF
 chmod a+x ref_pgbench
