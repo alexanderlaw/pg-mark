@@ -42,9 +42,6 @@ def main(configfile, instances):
                            f'[@id="{repo_id}"]')
         repo_url = repo.get('url') if repo is not None else None
         if repo_url:
-            if instance.get('pgpro_edition') is not None:
-                repo_url = re.sub(r'\$PGPRO_EDN\b',
-                                  instance.get('pgpro_edition'), repo_url)
             if instance.get('pg_version') is not None:
                 repo_url = re.sub(r'\$PG_VERSION\b',
                                   instance.get('pg_version'), repo_url)
@@ -149,9 +146,6 @@ def main(configfile, instances):
         if instance.get('pg_version') is not None:
             build_args += ['--build-arg',
                            (f'PG_VERSION={instance.get("pg_version")}')]
-        if instance.get('pgpro_edition') is not None:
-            build_args += ['--build-arg',
-                           (f'PGPRO_EDN={instance.get("pgpro_edition")}')]
 
         if instance.get('initdb_options') is not None:
             build_args += ['--build-arg', (

@@ -9,8 +9,6 @@
         <repositories>
             <repository id="pgsql" url="http://apt.postgresql.org/pub/repos/apt $OS_CODENAME-pgdg main" />
             <repository id="pgsql-16beta" url="http://apt.postgresql.org/pub/repos/apt $OS_CODENAME-pgdg-testing main 16" />
-            <repository id="pgpro" url="http://repo.postgrespro.ru/$PGPRO_EDN-$PG_VERSION/ubuntu $OS_CODENAME main" />
-            <xi:include href="private_repositories.xml" />
         </repositories>
     </settings>
 
@@ -19,17 +17,6 @@
         <instance id="pg-src-9.6.10" type="src" pg_version="9.6.10" git_commit="REL9_6_10" cfg_options="--enable-nls" />
         <instance id="pg-apt-15" type="pgapt" pg_version="15" />
         <instance id="pg-apt-16beta" type="pgapt" pg_version="16" repository="pgsql-16beta" />
-        <instance id="pg-pro-apt-15" type="proapt" pg_version="15" pgpro_edition="std" repository="pgpro">
-            <config>
-                <pg_param name="custom.parameter1" value="1"/>
-                <pg_param name="custom.parameter2" value="2"/>
-                <envvar name="custom_var" value="val"/>
-            </config>
-        </instance>
-        <instance id="pg-pro-apt-15-lunar" type="proapt" pg_version="15" pgpro_edition="std" repository="pgpro">
-            <os version="23.04" />
-        </instance>
-        <xi:include href="private_instances.xml" />
         <instance id="pg-src-master-perf" disabled="true" type="src" features="perf" git_branch="master" />
         <instance id="pg-src-15" type="src" pg_version="15devel" git_branch="REL_15_STABLE" />
         <instance id="pg-src-16" type="src" pg_version="16devel" git_branch="REL_16_STABLE" />
@@ -366,7 +353,6 @@ cat results/run.log
         <benchmark id="job">
             <prerequisites>
                 <git url="https://github.com/gregrahn/join-order-benchmark.git" target_dir="resources/job" />
-                <zip url="https://oc.postgrespro.ru/index.php/s/Zo8kZiT8V8GJbvo/download" target_dir="resources/job-imdb" />
             </prerequisites>
             <prepare>
 <![CDATA[

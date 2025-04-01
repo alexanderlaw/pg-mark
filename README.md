@@ -114,18 +114,3 @@ results (benchmark-results.xml).
 The structure of config.xml yet to be documented, but it's supposed to be
 transparent and self-explanatory.
 
-
-#### Notice ####
-You can add private repositories and instance definitions with the following
-extra configuration files:  
-private_repositories.xml:
-
-    <repository id="pgproee"
-     url="https://user:password@repoee.postgrespro.ru/pgproee-$PG_VERSION/ubuntu $OS_CODENAME main" />
-
-private_instances.xml:
-
-    <private>
-        <instance id="pg-proee-apt-15" type="proapt" pgpro_edition="ent"
-         repository="pgproee" pg_version="15" />
-    </private>
