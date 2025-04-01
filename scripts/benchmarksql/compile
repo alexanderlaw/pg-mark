@@ -4,7 +4,7 @@ set -e
 
 SOURCEDIR=$1
 [ -n "$SOURCEDIR" ] || SOURCEDIR="resources/benchmarksql"
-cd $SOURCEDIR
+cd "$SOURCEDIR"
 BMDIR=$(ls -d benchmarksql*)
 [ -n "$BMDIR" ] || exit 2
 cd "$BMDIR"

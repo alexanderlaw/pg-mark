@@ -14,15 +14,15 @@ mkdir src/tpcds
 cp -r --preserve=timestamps resources/tpcds/*/* src/tpcds/
 cd src/tpcds/tools
 CPPFLAGS="-fcommon" make -s
-mkdir $TMPDIR
-./dsdgen -SCALE $SCALE -TERMINATE N -DIR $TMPDIR
+mkdir "$TMPDIR"
+./dsdgen -SCALE "$SCALE" -TERMINATE N -DIR "$TMPDIR"
 
 # Generate queries with the template number
-mkdir $TMPDIR/templates
-cp "$SD/resources/tpcds-tooling/templates"/* $TMPDIR/templates/
-sed -i '1s|^|Define ECHO = "\\echo >>"; [ECHO] [_TEMPLATE];\n|' $TMPDIR/templates/query*.tpl
-[ -z "$QUERY" ] || echo "$QUERY.tpl" >$TMPDIR/templates/templates-compat.lst
-./dsqgen -SCALE $SCALE -INPUT $TMPDIR/templates/templates-compat.lst -DIRECTORY $TMPDIR/templates/ -DIALECT postgres
+mkdir "$TMPDIR"/templates
+cp "$SD/resources/tpcds-tooling/templates"/* "$TMPDIR"/templates/
+sed -i '1s|^|Define ECHO = "\\echo >>"; [ECHO] [_TEMPLATE];\n|' "$TMPDIR"/templates/query*.tpl
+[ -z "$QUERY" ] || echo "$QUERY.tpl" >"$TMPDIR"/templates/templates-compat.lst
+./dsqgen -SCALE "$SCALE" -INPUT "$TMPDIR"/templates/templates-compat.lst -DIRECTORY "$TMPDIR"/templates/ -DIALECT postgres
 [ -f query_0.sql ] || exit 1
 
 cd "$SD"
@@ -32,9 +32,9 @@ createdb tpcds
 psql tpcds < resources/tpcds-tooling/ddl/tables.sql
 
 echo "  loading data"
-sed -e "s|/mnt/data/tpcds/data/|$TMPDIR/|" resources/tpcds-tooling/ddl/load.sql >$TMPDIR/load.sql
-sed 's/\xd4/Ô/; s/\xc9/É/' -i $TMPDIR/customer.dat # Convert 'Ô' in "CÔTE D'IVOIRE" and 'É' in "RÉUNION" to UTF-8
-/usr/bin/time -f '%e' -o time.tmp psql -v ON_ERROR_STOP=1 tpcds -f $TMPDIR/load.sql
+sed -e "s|/mnt/data/tpcds/data/|$TMPDIR/|" resources/tpcds-tooling/ddl/load.sql >"$TMPDIR"/load.sql
+sed 's/\xd4/Ô/; s/\xc9/É/' -i "$TMPDIR"/customer.dat # Convert 'Ô' in "CÔTE D'IVOIRE" and 'É' in "RÉUNION" to UTF-8
+/usr/bin/time -f '%e' -o time.tmp psql -v ON_ERROR_STOP=1 tpcds -f "$TMPDIR"/load.sql
 time_a=$(cat time.tmp)
 size_a=$(du -s "$DATADIR" | cut -f 1)
 
