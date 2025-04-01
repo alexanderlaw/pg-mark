@@ -2,7 +2,7 @@
 <config xmlns:xi="http://www.w3.org/2001/XInclude">
     <settings>
         <default>
-            <os distr="ubuntu" version="22.04" />
+            <os distr="ubuntu" version="24.04" />
             <repository id="pgsql" />
             <git path="postgres.git" />
         </default>
