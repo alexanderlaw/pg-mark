@@ -74,11 +74,11 @@ def main(configfile, instances):
 
         if instance.get('type') == 'src':
             #  Prepare source directory
-            git_dir = config.find('./settings/default/git').get('path')
+            git_dir = config.find('./settings/default/postgres_git').get('path')
             if not os.path.exists(git_dir):
                 # pylint: disable=broad-exception-raised
                 raise Exception(f'Git directory ({git_dir}) not found'
-                                ' (check settings/default/git in config.xml)!')
+                                ' (check settings/default/postgres_git in config.xml)!')
             git_branch = instance.get('git_branch')
             if git_branch:
                 check_call(f'cd "{git_dir}" && git checkout "{git_branch}" && '
@@ -118,7 +118,7 @@ def main(configfile, instances):
                 build_args += ['--build-arg', (f'CFG_OPTIONS="{cfg_options}"')]
 
         # Prepare reference pgbench
-        git_dir = config.find('./settings/default/git').get('path')
+        git_dir = config.find('./settings/default/postgres_git').get('path')
         ref_pgbench_version = 'REL_17_1'
         check_call(f'cd "{git_dir}" && rm -rf * && '
                    f'git checkout {ref_pgbench_version} >/dev/null && '
