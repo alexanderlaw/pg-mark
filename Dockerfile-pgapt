@@ -45,6 +45,7 @@ RUN apt-get update && apt-get install -y -t `awk '{print $3}' /etc/apt/sources.l
 WORKDIR /home/postgres
 
 ADD postgres-pgbench.tar.gz /home/postgres/src/postgres-pgbench
+RUN chown postgres:postgres /home/postgres/src
 RUN chown postgres:postgres /home/postgres/src/postgres-pgbench
 
 # Setup jdbc driver

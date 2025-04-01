@@ -36,7 +36,7 @@ RUN useradd -m postgres
 WORKDIR /home/postgres
 
 ADD postgres.tar.gz /home/postgres/src/postgres
-RUN chown -R postgres:postgres /home/postgres/src/postgres
+RUN chown -R postgres:postgres /home/postgres/src
 ADD postgres-pgbench.tar.gz /home/postgres/src/postgres-pgbench
 RUN chown postgres:postgres /home/postgres/src/postgres-pgbench
 
