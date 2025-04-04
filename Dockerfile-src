@@ -101,7 +101,7 @@ RUN touch /home/postgres/extra.conf && printf "\nlisten_addresses='*'\n"\
 # log_statement = all
 # log_min_messages = info
 RUN m=$EXTRA_PG_MODULES; m="${m%\"}";m="${m#\"}"; \
-    [ ! -z "$m" ] || printf "\nshared_preload_libraries = '"$m"'\n" >> /var/lib/postgresql/main/postgresql.conf
+    [ -z "$m" ] || printf "\nshared_preload_libraries = '"$m"'\n" >> /var/lib/postgresql/main/postgresql.conf
 RUN p=$PG_PARAMETERS; p="${p%\"}"; p="${p#\"}"; \
     [ -z "$p" ] || printf "\n$p\n" >> /var/lib/postgresql/main/postgresql.conf
 

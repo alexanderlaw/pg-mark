@@ -70,7 +70,7 @@ RUN touch /home/postgres/extra.conf && printf "\nlisten_addresses='*'\n"\
 "max_connections = 500\n"\
 "include '/home/postgres/extra.conf'\n" >> /etc/postgresql/$PG_VERSION/main/postgresql.conf
 RUN m=$EXTRA_PG_MODULES; m="${m%\"}";m="${m#\"}"; \
-    [ ! -z "$m" ] || printf "\nshared_preload_libraries = '"$m"'\n" >> /etc/postgresql/$PG_VERSION/main/postgresql.conf
+    [ -z "$m" ] || printf "\nshared_preload_libraries = '"$m"'\n" >> /etc/postgresql/$PG_VERSION/main/postgresql.conf
 RUN p=$PG_PARAMETERS; p="${p%\"}"; p="${p#\"}"; \
     [ -z "$p" ] || printf "\n$p\n" >> /etc/postgresql/$PG_VERSION/main/postgresql.conf
 
