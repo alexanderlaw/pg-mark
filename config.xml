@@ -5,6 +5,7 @@
             <os distr="ubuntu" version="24.04" />
             <repository id="pgsql" />
             <postgres_git path="postgres.git" />
+            <neon_git path="neon.git" />
         </default>
         <repositories>
             <repository id="pgsql" url="http://apt.postgresql.org/pub/repos/apt $OS_CODENAME-pgdg main" />
@@ -22,6 +23,7 @@
         <instance id="pg-src-16" type="src" pg_version="16devel" git_branch="REL_16_STABLE" />
         <instance id="pg-src-17" type="src" pg_version="17devel" git_branch="REL_17_STABLE" />
         <instance id="pg-src-master" type="src" pg_version="18devel" git_branch="master" />
+        <instance id="neon-src-pg17-main" type="neon-src" pg_version="17" git_branch="main" />
     </pg_instances>
 
     <benchmarks>
