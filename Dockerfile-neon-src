@@ -1,0 +1,104 @@
+FROM neondatabase/build-tools:pinned-bookworm
+ARG FEATURES
+ARG PG_VERSION
+ARG PHASE1_ACTION
+ARG PHASE2_ACTION
+ARG REPOSITORY
+ARG EXTRA_OS_PACKAGES
+ARG EXTRA_SRC_GIT
+ARG EXTRA_PG_MODULES
+ARG INITDB_OPTIONS
+ARG PG_PARAMETERS
+ARG CFG_OPTIONS
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+USER root
+
+# Install a common set of packages needed for tests
+RUN p=$EXTRA_OS_PACKAGES; p="${p%\"}";p="${p#\"}"; \
+    apt update && apt install -y $p \
+    software-properties-common wget vim time pkg-config locales recode \
+    openjdk-17-jdk maven sysbench
+
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen
+RUN locale-gen && update-locale LANG=en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+
+COPY ./$PHASE1_ACTION /bin/
+RUN $PHASE1_ACTION
+
+RUN useradd -m postgres
+
+WORKDIR /home/postgres
+
+# Setup jdbc driver
+RUN JAVA_VERSION=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}'); \
+    case "$JAVA_VERSION" in \
+        1\.6* ) jdbcjar="https://jdbc.postgresql.org/download/postgresql-42.2.12.jre6.jar" ;; \
+        1\.7* ) jdbcjar="https://jdbc.postgresql.org/download/postgresql-42.2.12.jre7.jar" ;; \
+        *) jdbcjar="https://jdbc.postgresql.org/download/postgresql-42.2.12.jar" ;; \
+    esac; \
+    [ -z "$jdbcjar" ] || wget --no-verbose "$jdbcjar" -P /usr/share/java
+
+ADD neon.tar.gz /home/postgres/src/neon
+RUN chown postgres:postgres /home/postgres/src
+RUN chown postgres:postgres /home/postgres/src/neon
+
+ADD postgres-pgbench.tar.gz /home/postgres/src/postgres-pgbench
+RUN chown postgres:postgres /home/postgres/src/postgres-pgbench
+
+RUN mkdir /var/lib/postgresql && chown postgres:postgres /var/lib/postgresql
+
+USER postgres
+
+# Install python 3.10 for s64da benchmarks
+RUN python3 -m venv venv3.12
+RUN venv3.12/bin/pip install uv && venv3.12/bin/uv venv --python 3.10 venv3.10 && venv3.12/bin/uv pip install --python venv3.10 pip
+
+RUN cd /home/postgres/src/neon && BUILD_TYPE=release make -j`nproc` -s
+
+ENV PATH="/home/postgres/venv3.10/bin/:$PATH:/home/postgres/src/neon/pg_install/v$PG_VERSION/bin:/home/postgres/src/neon/target/release"
+ENV POSTGRES_DISTRIB_DIR=/home/postgres/src/neon/pg_install
+
+ENV PGHOST=127.0.0.1
+ENV PGPORT=5432
+
+RUN touch /home/postgres/extra.conf && printf "\nlisten_addresses='*'\n"\
+"logging_collector = on\n"\
+"fsync = off\n"\
+"max_connections = 500\n"\
+"shared_buffers = 1GB\n"\
+"neon.file_cache_path = '/home/postgres/lfc'\n"\
+"neon.max_file_cache_size = 32GB\n"\
+"neon.file_cache_size_limit = 32GB\n"\
+"include '/home/postgres/extra.conf'\n" >> postgresql+.conf
+
+RUN m="${EXTRA_PG_MODULES-}"; m="${m%\"}"; m="${m#\"}"; \
+    [ -z "$m" ] || printf "\nshared_preload_libraries = '"$m"'\n" >> postgresql+.conf
+RUN p="${PG_PARAMETERS-}"; p="${p%\"}"; p="${p#\"}"; \
+    [ -z "$p" ] || printf "\n$p\n" >> postgresql+.conf
+
+RUN neon_local init && neon_local start && \
+    neon_local tenant create --pg-version $PG_VERSION --set-default && \
+    neon_local endpoint create --pg-version $PG_VERSION --pg-port 5432 main && \
+    cat postgresql+.conf >> .neon/endpoints/main/postgresql.conf && \
+    neon_local endpoint start main && \
+    psql -U cloud_admin -d postgres -c "CREATE USER postgres WITH SUPERUSER PASSWORD 'pgpass'; CREATE USER tester WITH SUPERUSER PASSWORD 'tester';" && \
+    neon_local stop && sleep 3
+
+COPY ./setup-reference-pgbench /tmp/
+RUN /tmp/setup-reference-pgbench $PG_VERSION
+
+COPY ./$PHASE2_ACTION /bin/
+RUN $PHASE2_ACTION
+
+RUN echo "neon_local start >/tmp/start.log 2>&1; neon_local endpoint start main >>/tmp/start.log 2>&1; sleep inf" >/home/postgres/neon_start && \
+    chmod a+x /home/postgres/neon_start
+
+# Expose the PostgreSQL port
+EXPOSE 5432
+
+# Set the default command to run when starting the container
+CMD /home/postgres/neon_start
