@@ -117,6 +117,42 @@ def main(configfile, instances):
             if cfg_options:
                 build_args += ['--build-arg', (f'CFG_OPTIONS="{cfg_options}"')]
 
+        if instance.get('type') == 'neon-src':
+            #  Prepare source directory
+            git_dir = config.find('./settings/default/neon_git').get('path')
+            if not os.path.exists(git_dir):
+                # pylint: disable=broad-exception-raised
+                raise Exception(f'Git directory ({git_dir}) not found'
+                                ' (check settings/default/neon_git in config.xml)!')
+            git_branch = instance.get('git_branch')
+            if git_branch:
+                check_call(f'cd "{git_dir}" && git checkout "{git_branch}" && '
+                           f'rm -rf * && git reset --hard HEAD && git rebase',
+                           shell=True)
+
+            git_commit = instance.get('git_commit')
+            if git_commit:
+                check_call(f'cd "{git_dir}" && git checkout "{git_commit}" && '
+                           f'git reset --hard HEAD',
+                           shell=True)
+            check_call(f'cd "{git_dir}" && rm -rf vendor/postgres-v* && '
+                       f'git submodule update --init --recursive --depth 2 '
+                       f' --progress .',
+                       shell=True)
+
+            for patch in instance.findall('patches/patch'):
+                if patch.get('commit'):
+                    check_call(f'cd "{git_dir}" && git apply ' +
+                               patch.get("commit"),
+                               shell=True)
+                elif patch.get('file'):
+                    check_call(f'cd "{git_dir}" && patch -p1 -l -i ' +
+                               os.path.abspath(patch.get("file")),
+                               shell=True)
+
+            check_call(f'cd "{git_dir}" && tar --exclude=.git -czf '
+                       f'../docker-context/neon.tar.gz *', shell=True)
+
         # Prepare reference pgbench
         git_dir = config.find('./settings/default/postgres_git').get('path')
         ref_pgbench_version = 'REL_17_1'
