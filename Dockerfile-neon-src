@@ -80,7 +80,9 @@ RUN m="${EXTRA_PG_MODULES-}"; m="${m%\"}"; m="${m#\"}"; \
 RUN p="${PG_PARAMETERS-}"; p="${p%\"}"; p="${p#\"}"; \
     [ -z "$p" ] || printf "\n$p\n" >> postgresql+.conf
 
-RUN neon_local init && neon_local start && \
+RUN neon_local init && \
+    sed 's/sync = /sync = false # /' -i .neon/config && \
+    neon_local start && \
     neon_local tenant create --pg-version $PG_VERSION --set-default && \
     neon_local endpoint create --pg-version $PG_VERSION --pg-port 5432 main && \
     cat postgresql+.conf >> .neon/endpoints/main/postgresql.conf && \
