@@ -97,6 +97,7 @@ RUN touch /home/postgres/extra.conf && printf "\nlisten_addresses='*'\n"\
 "logging_collector = on\n"\
 "fsync = off\n"\
 "max_connections = 500\n"\
+"shared_buffers = 1GB\n"\
 "include '/home/postgres/extra.conf'\n" >> /var/lib/postgresql/main/postgresql.conf
 # log_statement = all
 # log_min_messages = info

@@ -68,6 +68,7 @@ RUN touch /home/postgres/extra.conf && printf "\nlisten_addresses='*'\n"\
 "logging_collector = on\n"\
 "fsync = off\n"\
 "max_connections = 500\n"\
+"shared_buffers = 1GB\n"\
 "include '/home/postgres/extra.conf'\n" >> /etc/postgresql/$PG_VERSION/main/postgresql.conf
 RUN m=$EXTRA_PG_MODULES; m="${m%\"}";m="${m#\"}"; \
     [ -z "$m" ] || printf "\nshared_preload_libraries = '"$m"'\n" >> /etc/postgresql/$PG_VERSION/main/postgresql.conf
