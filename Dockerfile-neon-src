@@ -49,6 +49,11 @@ RUN chown postgres:postgres /home/postgres/src/neon
 ADD postgres-pgbench.tar.gz /home/postgres/src/postgres-pgbench
 RUN chown postgres:postgres /home/postgres/src/postgres-pgbench
 
+# Allow rustup to install toolchains; avoid chmod -R because it takes too long
+RUN chown postgres:postgres /home/nonroot/.rustup /home/nonroot/.rustup/downloads \
+    /home/nonroot/.rustup/settings.toml /home/nonroot/.rustup/toolchains \
+    /home/nonroot/.rustup/tmp /home/nonroot/.rustup/update-hashes
+
 RUN mkdir /var/lib/postgresql && chown postgres:postgres /var/lib/postgresql
 
 USER postgres
