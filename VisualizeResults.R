@@ -33,14 +33,12 @@ df <- data.frame(
         return(xpathApply(x, "string(@id)"))}),
     bench=sapply(bmInstances, function(x){
         return(xpathApply(x, "string(../@id)"))}),
-    tps1=sapply(bmInstances, function(x){
-        return(as.numeric(xpathApply(x, "string(metric[@id='tps1']/@value)")))}),
-    tps2=sapply(bmInstances, function(x){
-        return(as.numeric(xpathApply(x, "string(metric[@id='tps2']/@value)")))})
+    tps=sapply(bmInstances, function(x){
+        return(as.numeric(xpathApply(x, "string(metric[@id='tps']/@value)")))})
 )
 print(df)
 
-ggplot(df, aes(x = factor(instance, levels=instance), y = tps1)) +
+ggplot(df, aes(x = factor(instance, levels=instance), y = tps)) +
   geom_bar(stat = "identity") +
   ylab("pgbench reference (tps)") +
   xlab("PG versions") +
