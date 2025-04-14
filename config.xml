@@ -135,7 +135,7 @@ scripts/tpcds/run >results/run.log 2>&1 && cat results/sizes.log && cat results/
             <execute>
 <![CDATA[
 # Arguments: RECORDCOUNT OPERATIONCOUNT 'WORKLOADS LIST' 'THREADS LIST'
-scripts/ycsb/run 1000000 1000000 'a b c d f' '10 25 50' >results/run.log 2>&1 && cat results/ycsb-run.log
+scripts/ycsb/run 1000000 1000000 'a b c d e f' '10 25 50' >results/run.log 2>&1 && cat results/ycsb-run.log
 ]]>
             </execute>
             <results>
