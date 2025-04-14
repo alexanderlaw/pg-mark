@@ -45,19 +45,19 @@ time_b=$(cat time.tmp)
 size_b=$(du -s "$DATADIR" | cut -f 1)
 
 echo "  vacuum full"
-/usr/bin/time -f '%e' -o time.tmp psql tpcds -c "vacuum full" > /dev/null 2>&1
+/usr/bin/time -f '%e' -o time.tmp psql tpcds -c "vacuum full" > /dev/null
 
 time_c=$(cat time.tmp)
 size_c=$(du -s "$DATADIR" | cut -f 1)
 
 echo "  vacuum freeze"
-/usr/bin/time -f '%e' -o time.tmp psql tpcds -c "vacuum freeze" > /dev/null 2>&1
+/usr/bin/time -f '%e' -o time.tmp psql tpcds -c "vacuum freeze" > /dev/null
 
 time_d=$(cat time.tmp)
 size_d=$(du -s "$DATADIR" | cut -f 1)
 
 echo "  analyze"
-/usr/bin/time -f '%e' -o time.tmp psql tpcds -c "analyze" > /dev/null 2>&1
+/usr/bin/time -f '%e' -o time.tmp psql tpcds -c "analyze" > /dev/null
 
 time_e=$(cat time.tmp)
 
