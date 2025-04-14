@@ -127,7 +127,7 @@ def main(instances, resultsfile, percent, targetmetric, targetvalue):
                     sign = '<' if abs(bestmain) < abs(curbest) else '>'
                     print(
                      f"Best {maininst} {spec} than {ipat} by "
-                     f"{abs(bestpercentdiff):.1f} percents "
+                     f"{abs(bestpercentdiff):.1f} percent "
                      f"({abs(bestmain):.2f} {sign} {abs(curbest):.2f}): "
                      f"{bench_id}.{metric}")
                 avgpercentdiff = 100 * ((avgmain - averages[ipat]) /
@@ -141,7 +141,7 @@ def main(instances, resultsfile, percent, targetmetric, targetvalue):
                     sign = '<' if abs(avgmain) < abs(averages[ipat]) else '>'
                     print(
                      f"Average {maininst} {spec} than {ipat} by "
-                     f"{abs(avgpercentdiff):.1f} percents "
+                     f"{abs(avgpercentdiff):.1f} percent "
                      f"({abs(avgmain):.2f} {sign} {abs(averages[ipat]):.2f}): "
                      f"{bench_id}.{metric}")
             if targetvalue is not None:
