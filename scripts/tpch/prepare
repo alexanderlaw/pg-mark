@@ -28,6 +28,7 @@ mkdir dss/queries
 sed -i -e 's/^\(\s\+l_partkey\) agg_partkey,/\1 AS agg_partkey,/' -e 's/^\(\s\+l_suppkey\) agg_suppkey,/\1 AS agg_suppkey,/' dss/templates/20.sql
 sed -i -e "s/WITH (FORMAT csv, DELIMITER '|')/WITH CSV DELIMITER '|'/" dss/tpch-load.sql # For compatibility with 8.0
 sed -i -e 's/kill $p;/kill $p || true;/' tpch.sh # To prevent returning an error
+sed -i -e 's/SELECT pg_terminate_backend(procpid) FROM pg_stat_activity/SELECT pg_terminate_backend(pid) FROM pg_stat_activity/' tpch.sh # this field was renamed in 4f42b546f (9.2)
 
 extra_queries=""
 
