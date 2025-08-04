@@ -62,6 +62,7 @@ USER postgres
 RUN python3 -m venv venv3.12
 RUN venv3.12/bin/pip install uv && venv3.12/bin/uv venv --python 3.10 venv3.10 && venv3.12/bin/uv pip install --python venv3.10 pip
 
+RUN cd /home/postgres/src/neon && sed 's/with-libseccomp/without-libseccomp/' -i Makefile
 RUN cd /home/postgres/src/neon && BUILD_TYPE=release make -j`nproc` -s
 
 ENV PATH="/home/postgres/venv3.10/bin/:$PATH:/home/postgres/src/neon/pg_install/v$PG_VERSION/bin:/home/postgres/src/neon/target/release"
